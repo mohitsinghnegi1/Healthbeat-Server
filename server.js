@@ -17,7 +17,7 @@ app.use('/api/user', (req, res, next) => {
 
 //Routes
 
-const postRoutes = require('./route/post');
+const postRoutes = require('./route/user');
 app.use('/api/user', postRoutes);
 //app.get ,post ,delete ,patch to update
 
