@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Meal = require('./Meal.js');
 //attribute name should be in camelcase
 const user = new mongoose.Schema({
   firstName: {
@@ -32,10 +33,18 @@ const user = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  meals: {
+    type: Array,
+    of: Map,
+    default: [
+      { meal: 'pizza', calories: 100 },
+      { meal: 'burger', calories: 200 },
+    ],
+  },
   modifiedOn: {
     type: Date,
     default: Date.now(),
   },
 });
 
-module.exports = User = mongoose.model('user', user);
+module.exports = User = mongoose.model('User', user);
