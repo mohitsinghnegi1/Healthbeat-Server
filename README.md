@@ -1,4 +1,4 @@
-# nutrify.me
+# Healthbeat
 
 ## Problem statement
 Write a REST API for the input of calories
