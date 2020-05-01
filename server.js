@@ -17,8 +17,11 @@ app.use('/api/user', (req, res, next) => {
 
 //Routes
 
-const postRoutes = require('./route/user');
-app.use('/api/user', postRoutes);
+const userRoutes = require('./route/user');
+app.use('/api/user', userRoutes);
+
+const mealRoutes = require('./route/meal');
+app.use('/api/meal', mealRoutes);
 //app.get ,post ,delete ,patch to update
 
 app.listen(Port, () => {
