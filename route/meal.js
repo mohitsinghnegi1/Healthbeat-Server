@@ -1,6 +1,7 @@
 //post route file
 var fetch = require('node-fetch');
 var config = require('../config');
+var verifyAuth = require('../middleware/Auth');
 //integrate nutritionix api to get calories of given meal
 var getCalories = async (mealName) => {
   var calories = -1;
@@ -8,9 +9,9 @@ var getCalories = async (mealName) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-app-id': process.env.XAPPID,
-      'x-app-key': process.env.XAPPKEY,
-      'x-remote-user-id': '0',
+      'x-app-id': 'd8e06552',
+      'x-app-key': '4cd8c77632446b09fb465e75d34b42c4',
+      'x-remote-user-id': 0,
     },
     body: JSON.stringify({ query: mealName }),
   });
@@ -21,7 +22,7 @@ var getCalories = async (mealName) => {
 const Meal = require('../db/modals/Meal');
 const express = require('express');
 const router = express.Router();
-router.post('/', async (req, res) => {
+router.post('/', verifyAuth, async (req, res) => {
   // console.log('reqbody :', req.body);
   let body = req.body;
   // console.log('body ', body);
@@ -58,11 +59,11 @@ router.post('/', async (req, res) => {
   } else {
     res
       .status(400)
-      .send('Error :' + 'Meal with ' + body.mealName + ' does not exists');
+      .send('Error :' + 'Meal with name ' + body.mealName + ' does not exists');
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', verifyAuth, async (req, res) => {
   try {
     let mealModel = await Meal.find().limit(5);
 
@@ -73,7 +74,7 @@ router.get('/', async (req, res) => {
 });
 
 // this route will get specific meal if exist
-router.get('/:mealId', async (req, res) => {
+router.get('/:mealId', verifyAuth, async (req, res) => {
   try {
     const meal = await Meal.findById(req.params.mealId);
     if (!meal) {
@@ -88,7 +89,7 @@ router.get('/:mealId', async (req, res) => {
 });
 
 // this route will get specific meal if exist
-router.delete('/:mealId', async (req, res) => {
+router.delete('/:mealId', verifyAuth, async (req, res) => {
   try {
     const meal1 = await Meal.deleteOne({ _id: req.params.mealId });
 
@@ -99,7 +100,7 @@ router.delete('/:mealId', async (req, res) => {
 });
 
 // this route will get specific meal if exist
-router.patch('/:mealId', async (req, res) => {
+router.patch('/:mealId', verifyAuth, async (req, res) => {
   const updateOps = {};
   //we are expecting body like [{'propName':"firstName,'value':"mohit"},{'propName':"lastName,'value':"singhNegi"}]
   req.body.forEach((ops) => {

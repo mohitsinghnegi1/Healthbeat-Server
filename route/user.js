@@ -1,29 +1,52 @@
 //post route file
 const User = require('../db/modals/User');
 const express = require('express');
+const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
+var jwt = require('jsonwebtoken');
+var verifyAuth = require('../middleware/Auth');
+const saltRounds = 10;
 const router = express.Router();
 router.post('/', (req, res) => {
-  // res.json(userModel)
-  //We are expecting json inside body
-  // const { firstName, lastName } = req.body;
+  const { username, email, password, confpassword } = req.body;
   // console.log(req.body);
-  // let user = {};
-  // user.firstName = firstName;
-  // user.lastName = lastName;
-  console.log('reqbody :', req.body);
-  let userModel = new User(req.body);
-  userModel
-    .save()
-    .then(() => {
-      console.log(userModel);
-      res.status(200).send('posted successfully' + userModel);
-      return;
-    })
-    .catch((e) => {
-      console.log(userModel);
-      res.status(400).send('Exception :' + e);
-      return;
+
+  if (password != confpassword) {
+    res.send({
+      message: 'Password not matched',
     });
+    return;
+  }
+
+  bcrypt.hash(password, saltRounds, function (error, hash) {
+    if (error) {
+      return res.json({
+        error: 'Something went wrong.Please try again later! .',
+      });
+    } else {
+      let user = {};
+      (user._id = mongoose.Types.ObjectId()), (user.username = username);
+      user.email = email;
+      user.password = hash;
+
+      let userModel = new User(user);
+      userModel
+        .save()
+        .then((data) => {
+          console.log('res', data);
+          res
+            .status(200)
+            .json({ message: 'User Registered Successfully', result: data });
+        })
+        .catch((e) => {
+          console.log({ error: e });
+          console.log(userModel);
+          res.status(400).json({ error: e });
+        });
+    }
+
+    // Store hash in your password DB.
+  });
 });
 
 // router.post('/specific', (req, res) => {
@@ -47,7 +70,7 @@ router.post('/', (req, res) => {
 //     });
 // });
 
-router.get('/', async (req, res) => {
+router.get('/', verifyAuth, async (req, res) => {
   try {
     let userModel = await User.find().limit(5);
 
@@ -58,7 +81,7 @@ router.get('/', async (req, res) => {
 });
 
 // this route will get specific user if exist
-router.get('/:userId', async (req, res) => {
+router.get('/:userId', verifyAuth, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     if (!user) {
@@ -73,7 +96,7 @@ router.get('/:userId', async (req, res) => {
 });
 
 // this route will get specific user if exist
-router.delete('/:userId', async (req, res) => {
+router.delete('/:userId', verifyAuth, async (req, res) => {
   try {
     const user1 = await User.deleteOne({ _id: req.params.userId });
 
@@ -84,7 +107,7 @@ router.delete('/:userId', async (req, res) => {
 });
 
 // this route will get specific user if exist
-router.patch('/:userId', async (req, res) => {
+router.patch('/:userId', verifyAuth, async (req, res) => {
   const updateOps = {};
   //we are expecting body like [{'propName':"firstName,'value':"mohit"},{'propName':"lastName,'value':"singhNegi"}]
   req.body.forEach((ops) => {
@@ -114,6 +137,43 @@ router.patch('/:userId', async (req, res) => {
   // } catch (e) {
   //   res.status(404).send('user not found to update');
   // }
+});
+
+router.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  User.findOne({ email: email })
+    .exec()
+    .then((user) => {
+      if (!user) {
+        res.status(404).send({
+          errorMsg: `Inocorrect username and password `,
+        });
+      } else {
+        bcrypt.compare(password, user.password, function (err, result) {
+          if (err || !result) {
+            res.status(404).send({
+              errorMsg: `Inocorrect username and password `,
+            });
+          } else {
+            console.log('sigin successful');
+            const { _id, username, userType } = user;
+            const userInfo = {
+              _id,
+              username,
+              email,
+              userType,
+            };
+            var token = jwt.sign(userInfo, 'secret', { expiresIn: '1h' });
+            res
+              .status(200)
+              .json({ message: 'Login Successfull', token, userInfo });
+          }
+        });
+      }
+    })
+    .catch((e) => {
+      res.status(400).send({ errorMsg: e });
+    });
 });
 
 module.exports = router;
