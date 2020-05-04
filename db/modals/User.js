@@ -1,23 +1,30 @@
 const mongoose = require('mongoose');
-const Meal = require('./Meal.js');
+require('mongoose-type-email');
 //attribute name should be in camelcase
 const user = new mongoose.Schema({
+  _id: mongoose.Schema.Types.ObjectId,
   firstName: {
     type: String,
-    required: true,
   },
   lastName: {
     type: String,
-    required: true,
   },
   username: {
     type: String,
+    index: {
+      unique: true,
+    },
+
     required: true,
-    unique: true,
   },
   email: {
-    type: String,
-    unique: true,
+    type: mongoose.SchemaTypes.Email,
+    // match:
+    //   '/^(([^<>()[]\\.,;:s@"]+(.[^<>()[]\\.,;:s@"]+)*)|(".+"))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/',
+    index: {
+      unique: true,
+    },
+
     required: true,
   },
   password: {
