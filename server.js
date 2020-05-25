@@ -11,7 +11,7 @@ const Port = process.env.Port || 5000;
 app.use(cors());
 app.use(express.json());
 app.use('/api/user', (req, res, next) => {
-  console.log('midddle ware is running', req.body);
+  // console.log('midddle ware is running', req.body);
   next();
 });
 

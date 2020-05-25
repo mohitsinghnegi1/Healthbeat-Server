@@ -149,17 +149,26 @@ router.delete('/:mealId', verifyAuth, async (req, res) => {
   try {
     const meal1 = await Meal.deleteOne({ _id: req.params.mealId });
 
-    res.send(meal1);
+    res.send({
+      error: false,
+      message: 'Meal deleted successfully!!',
+      deleted: meal1,
+    });
   } catch (e) {
-    res.status(404).send('meal not found to delete');
+    res.status(404).send({
+      error: true,
+      message: 'Something went wrong!!',
+      errObj: error,
+    });
   }
 });
 
 // this route will get specific meal if exist
 router.patch('/:mealId', verifyAuth, async (req, res) => {
   const updateOps = {};
+  console.log('body req', req);
   //we are expecting body like [{'propName':"firstName,'value':"mohit"},{'propName':"lastName,'value':"singhNegi"}]
-  req.body.forEach((ops) => {
+  req.body.data.forEach((ops) => {
     updateOps[ops.propName] = ops.value;
   });
   // some other method to update
@@ -171,10 +180,18 @@ router.patch('/:mealId', verifyAuth, async (req, res) => {
   Meal.updateOne({ _id: req.params.mealId }, { $set: updateOps })
     .exec()
     .then((response) => {
-      res.status(200).send(response);
+      res.status(200).send({
+        error: false,
+        message: 'Meal updated successfully',
+        response: response,
+      });
     })
     .catch((error) => {
-      res.status(404).send(error);
+      res.status(404).send({
+        error: true,
+        message: 'Something went wrong!!',
+        errObj: error,
+      });
     });
 });
 

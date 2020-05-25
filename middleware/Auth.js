@@ -2,6 +2,7 @@ var jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
   //   bearer
+  console.log('middleware');
   try {
     console.log('headers info ', req.headers);
     var bearertoken = req.headers.authorization;
@@ -25,6 +26,7 @@ module.exports = (req, res, next) => {
       }
     });
   } catch (error) {
+    console.log('error', error);
     res.status(401).json({
       errMsg: 'Missing authorization info',
       error: error,
