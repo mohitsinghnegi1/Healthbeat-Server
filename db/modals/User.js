@@ -40,14 +40,14 @@ const user = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  meals: {
-    type: Array,
-    of: Map,
-    default: [
-      { meal: 'pizza', calories: 100 },
-      { meal: 'burger', calories: 200 },
-    ],
-  },
+  // meals: {
+  //   type: Array,
+  //   of: Map,
+  //   default: [
+  //     { meal: 'pizza', calories: 100, addeddate: Date.now() },
+  //     { meal: 'burger', calories: 200 },
+  //   ],
+  // },
   modifiedOn: {
     type: Date,
     default: Date.now(),

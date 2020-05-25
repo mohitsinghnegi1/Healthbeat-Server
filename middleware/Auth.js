@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken');
+
 module.exports = (req, res, next) => {
   //   bearer
   try {
@@ -8,6 +9,7 @@ module.exports = (req, res, next) => {
     var token = bearertoken.split(' ')[1];
     console.log('token', token);
     jwt.verify(token, 'secret', function (err, decoded) {
+      console.log('pahucha?');
       if (err) {
         res.status(401).json({
           errMsg: 'Invalid token',
@@ -15,6 +17,9 @@ module.exports = (req, res, next) => {
         });
       } else {
         req.userInfo = decoded;
+
+        //db
+
         console.log('user decoded data ', decoded);
         next();
       }
