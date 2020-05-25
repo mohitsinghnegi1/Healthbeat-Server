@@ -15,6 +15,10 @@ const meal = new mongoose.Schema({
   isInDayLimit: {
     type: Boolean,
   },
+  userId: {
+    type: String,
+    required: true,
+  },
   modifiedOn: {
     type: Date,
     default: Date.now(),

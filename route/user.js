@@ -139,6 +139,7 @@ router.patch('/:userId', verifyAuth, async (req, res) => {
   // }
 });
 
+//login user
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
   User.findOne({ email: email })
@@ -146,7 +147,7 @@ router.post('/login', (req, res) => {
     .then((user) => {
       if (!user) {
         res.status(404).send({
-          errorMsg: `Inocorrect username and password `,
+          errorMsg: `Incorrect username and password`,
         });
       } else {
         bcrypt.compare(password, user.password, function (err, result) {
