@@ -21,7 +21,7 @@ const meal = new mongoose.Schema({
   },
   modifiedOn: {
     type: Date,
-    default: Date.now(),
+    default: new Date(),
   },
 });
 

@@ -50,7 +50,7 @@ const user = new mongoose.Schema({
   // },
   modifiedOn: {
     type: Date,
-    default: Date.now(),
+    default: new Date(),
   },
   userType: {
     type: String,
